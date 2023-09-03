@@ -1,0 +1,37 @@
+li {
+  display: flex;
+  justify-content: space-between;
+  min-width: 300px;
+  min-height: 55px;
+  /*background-color: lightsteelblue;*/
+  padding: var(--spacing-small);
+  border-radius: var(--roundness);
+}
+
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 22px;
+  width: 22px;
+}
+
+.checkbox {
+  height: 22px;
+  width: 22px;
+}
+
+.text {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cross {
+  color: red
+}
+
+.done {
+  text-decoration: line-through;
+  color: green;
+}
