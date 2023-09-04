@@ -10,8 +10,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "fakeserver": "json-server --watch ./_data/db.json --port 4000 --delay 500",
-    "fakeserver:with-auth": "json-server --watch ./_data/db.json --port 4000 --delay 500 -m ./node_modules/json-server-auth",
-    "fakeserver:with-auth2": "json-server-auth --watch ./_data/db.json --port 4000 --delay 500 "
+    "fakeserver:with-auth": "json-server-auth --watch ./_data/db.json --port 4000 --delay 500 "
 
   },
   "dependencies": {

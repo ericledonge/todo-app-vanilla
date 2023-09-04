@@ -11,42 +11,36 @@ import {
   updateTodoService,
 } from "../../services";
 
-// store
-import { useGetAccessToken, useGetUserId } from "../../store";
-
 export const useTodos = () => {
-  const userId = useGetUserId();
-  const accessToken = useGetAccessToken();
-
   const [todos, setTodos] = useState<Todo[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
   const fetchTodos = useCallback(async () => {
     setIsLoading(true);
-    fetchTodosService({ accessToken, userId })
+    fetchTodosService()
       .then((todos) => {
         setTodos(todos);
       })
       .catch((error) => setError(error.message))
       .finally(() => setIsLoading(false));
-  }, [accessToken, userId]);
+  }, []);
 
   useEffect(() => {
-    fetchTodos();
+    fetchTodos().then();
   }, [fetchTodos]);
 
   // use case
   const addTodo = useCallback(
     async (todo: Todo) => {
       try {
-        await addTodoService({ todo, accessToken });
+        await addTodoService(todo);
         await fetchTodos();
       } catch (error) {
-        setError(error as Error);
+        setError(new Error("Failed to add a new todo."));
       }
     },
-    [accessToken, fetchTodos],
+    [fetchTodos],
   );
 
   const toggleTodo = useCallback(
@@ -60,25 +54,25 @@ export const useTodos = () => {
       updatedTodo.isDone = !updatedTodo.isDone;
 
       try {
-        await updateTodoService({ todo: updatedTodo, accessToken });
+        await updateTodoService(updatedTodo);
         await fetchTodos();
       } catch (error) {
-        setError(error as Error);
+        setError(new Error(`Failed to toggle todo id: ${todoId}`));
       }
     },
-    [todos, accessToken, fetchTodos],
+    [todos, fetchTodos],
   );
 
   const removeTodo = useCallback(
     async (todoId: TodoId) => {
       try {
-        await deleteTodoService({ todoId, accessToken });
+        await deleteTodoService(todoId);
         await fetchTodos();
       } catch (error) {
-        setError(error as Error);
+        setError(new Error(`Failed to remove todo id: ${todoId}`));
       }
     },
-    [accessToken, fetchTodos],
+    [fetchTodos],
   );
 
   return {
