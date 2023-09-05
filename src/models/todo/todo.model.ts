@@ -6,3 +6,5 @@ export type Todo = {
   isDone: boolean;
   userId: number;
 };
+
+export type Todos = Todo[];

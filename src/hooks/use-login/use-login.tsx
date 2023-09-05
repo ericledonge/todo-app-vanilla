@@ -1,13 +1,30 @@
-import { ChangeEvent, FormEvent, useState } from "react";
-
-// services
-import { signIn } from "../../services";
+import { ChangeEvent, FormEvent, useMemo, useState } from "react";
 
 // store
-import { useSetAccessToken, useSetLogin, useSetUserId } from "../../store";
+import { useGetSystemUsed, useSetAccessToken, useSetUserId } from "../../store";
+
+// repositories
+import { AuthRepository } from "../../repositories";
+
+// services
+import {
+  AuthFetchJsonServerService,
+  AuthKyJsonServerService,
+} from "../../services";
 
 export const useLogin = () => {
-  const setLogin = useSetLogin();
+  const systemUsed = useGetSystemUsed();
+
+  const authRepository: AuthRepository = useMemo(() => {
+    if (systemUsed === "KY_JSON_SERVER") {
+      return new AuthRepository(new AuthKyJsonServerService());
+    }
+    if (systemUsed === "FETCH_JSON_SERVER") {
+      return new AuthRepository(new AuthFetchJsonServerService());
+    }
+    throw new Error("Invalid systemUsed value");
+  }, [systemUsed]);
+
   const setUserId = useSetUserId();
   const setAccessToken = useSetAccessToken();
 
@@ -38,15 +55,19 @@ export const useLogin = () => {
     }
 
     setIsSubmitting(true);
-    const response = await signIn(email, password);
+    const response = await authRepository.signIn(email, password);
+
+    console.log("response", response);
+
     if (response) {
-      setLogin();
-      setUserId(response.user.id);
+      setUserId(response.userId);
       setAccessToken(response.accessToken);
     }
+
     if (!response) {
       setError("Login failed");
     }
+
     setIsSubmitting(false);
   };
 
