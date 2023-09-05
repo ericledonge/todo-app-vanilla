@@ -11,10 +11,10 @@
     "preview": "vite preview",
     "fakeserver": "json-server --watch ./_data/db.json --port 4000 --delay 500",
     "fakeserver:with-auth": "json-server-auth --watch ./_data/db.json --port 4000 --delay 500 "
-
   },
   "dependencies": {
     "json-server-auth": "^2.1.0",
+    "ky": "^1.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "zustand": "^4.4.1"

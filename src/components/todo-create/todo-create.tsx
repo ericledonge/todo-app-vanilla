@@ -24,7 +24,7 @@ export const TodoCreate = ({ onAddTodo }: TodoCreateProps) => {
       id: Math.random(),
       description: (event.currentTarget[0] as HTMLInputElement).value,
       isDone: false,
-      userId,
+      userId: userId!, // TODO: fix this
     };
 
     onAddTodo?.(newTodo);

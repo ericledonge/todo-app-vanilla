@@ -3,13 +3,17 @@ import "./nav.styles.css";
 import {
   useGetIsUserAuthenticated,
   useGetSystemUsed,
-  useSetLogout,
+  useSetAccessToken,
 } from "../../store";
 
 export const Nav = () => {
   const isAuthenticated = useGetIsUserAuthenticated();
   const systemUsed = useGetSystemUsed();
-  const setLogout = useSetLogout();
+  const setAccessToken = useSetAccessToken();
+
+  const handleLogout = () => {
+    setAccessToken(null);
+  };
 
   return (
     <nav>
@@ -21,7 +25,7 @@ export const Nav = () => {
         </div>
 
         <div className="flex-container-flex-end">
-          {isAuthenticated && <button onClick={setLogout}>Logout</button>}
+          {isAuthenticated && <button onClick={handleLogout}>Logout</button>}
         </div>
       </div>
     </nav>

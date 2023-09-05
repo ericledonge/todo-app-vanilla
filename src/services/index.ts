@@ -1,2 +1,2 @@
-export * from "./todos.services.ts";
-export * from "./auth.services.ts";
+export * from "./todos";
+export * from "./auth";

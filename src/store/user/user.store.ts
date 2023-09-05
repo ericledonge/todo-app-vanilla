@@ -1,59 +1,44 @@
 import { StoreSlice, System, User } from "../../models";
 
-export type UserSlice = {
+type UserState = {
   user: User;
-  login: () => void;
-  logout: () => void;
-  setUserId: (id: number) => void;
-  setAccessToken: (accessToken: string) => void;
+};
+
+type UserActions = {
+  setUserId: (userId: number) => void;
+  setAccessToken: (accessToken: string | null) => void;
   setSystemUsed: (system: System) => void;
 };
 
+export type UserSlice = UserState & UserActions;
+
+// @ts-ignore
 export const createUserSlice: StoreSlice<UserSlice> = (set) => ({
   user: {
-    id: 0,
-    isAuthenticated: false,
-    accessToken: "",
-    systemUsed: "JSON_SERVER",
+    id: null,
+    accessToken: null,
+    systemUsed: "KY_JSON_SERVER",
   },
-  login: () => {
+
+  setUserId: (userId: number) =>
     set(
-      (state) => ({ user: { ...state.user, isAuthenticated: true } }),
-      false,
-      // @ts-ignore
-      "login",
-    );
-  },
-  logout: () => {
-    set(
-      (state) => ({ user: { ...state.user, isAuthenticated: false } }),
-      false,
-      // @ts-ignore
-      "logout",
-    );
-  },
-  setUserId: (id: number) => {
-    set(
-      (state) => ({ user: { ...state.user, id } }),
+      (state) => ({ user: { ...state.user, id: userId } }),
       false,
       // @ts-ignore
       "setUserId",
-    );
-  },
-  setAccessToken: (accessToken: string) => {
+    ),
+  setAccessToken: (accessToken: string | null) =>
     set(
       (state) => ({ user: { ...state.user, accessToken } }),
       false,
       // @ts-ignore
       "setAccessToken",
-    );
-  },
-  setSystemUsed: (system: System) => {
+    ),
+  setSystemUsed: (system: System) =>
     set(
       (state) => ({ user: { ...state.user, systemUsed: system } }),
       false,
       // @ts-ignore
       "setSystemUsed",
-    );
-  },
+    ),
 });

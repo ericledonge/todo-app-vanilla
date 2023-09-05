@@ -1,8 +1,7 @@
-export type System = "JSON_SERVER" | "Connected";
+export type System = "KY_JSON_SERVER" | "FETCH_JSON_SERVER";
 
 export type User = {
-  id: number;
-  isAuthenticated: boolean;
-  accessToken: string;
+  id: number | null;
+  accessToken: string | null;
   systemUsed: System;
 };
