@@ -10,6 +10,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// signup
+app.post('/signup', async (req, res) => {
+  console.log("signup");
+  const { username, password } = req.body;
+
+  try {
+    const newUser = await pool.query('INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *', [username, password]);
+    res.json(newUser.rows[0]);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+// login
+
 // get all todos
 app.get('/todos/:userId', async (req, res) => {
   console.log("get all todos");
