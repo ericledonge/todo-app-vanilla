@@ -29,6 +29,7 @@ export const Footer = () => {
           <select value={systemUsed} onChange={handleSystemChange}>
             <option value="KY_JSON_SERVER">KY_JSON_SERVER</option>
             <option value="FETCH_JSON_SERVER">FETCH_JSON_SERVER</option>
+            <option value="NODE">NODE</option>
           </select>
         </div>
       </div>

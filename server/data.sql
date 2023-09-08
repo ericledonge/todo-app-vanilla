@@ -1,6 +1,6 @@
 CREATE DATABASE todoapp;
 
-CREATE TABLE todos (id VARCHAR(255) PRIMARY KEY, user_id INT, title VARCHAR(30), is_done BOOLEAN);
+CREATE TABLE todos (id VARCHAR(255) PRIMARY KEY, user_id INT, title VARCHAR(30), is_done BOOLEAN, creation_date TIMESTAMP);
 
 CREATE TABLE users (id VARCHAR(255) PRIMARY KEY, email VARCHAR(255), hashed_password VARCHAR(255));
 
