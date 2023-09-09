@@ -30,7 +30,15 @@ export const LoginForm = () => {
           onChange={handleSetPassword}
         />
 
-        <button type="submit">{isSubmitting ? "In progress" : "Login"}</button>
+        <div>
+          <button type="submit">
+            {isSubmitting ? "In progress" : "Login"}
+          </button>
+
+          <button type="submit">
+            {isSubmitting ? "In progress" : "Register"}
+          </button>
+        </div>
       </form>
 
       <div className="error-container">

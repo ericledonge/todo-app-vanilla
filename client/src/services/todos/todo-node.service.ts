@@ -9,9 +9,28 @@ import { TodoService } from "./todo.service.ts";
 // store
 import { useStore } from "../../store";
 
-export class TodoKyJsonServerService implements TodoService {
+// TODO: add Zod with a schema for the response
+
+// TODO: Video 1h40
+
+const BACKEND_URL = "http://localhost:8000/todos";
+
+const mapTodoFromServerFormatToClientFormat = (todo: any): Todo => ({
+  id: todo.id,
+  userId: todo.user_id,
+  description: todo.title,
+  isDone: todo.is_done,
+});
+
+const mapTodoFromClientFormatToServerFormat = (todo: Todo): any => ({
+  user_id: todo.userId,
+  title: todo.description,
+  is_done: todo.isDone,
+});
+
+export class TodoNodeService implements TodoService {
   async fetchTodos(): Promise<Todo[]> {
-    console.log("Service: fetchTodos - TodoKyJsonServerService");
+    console.log("Service: fetchTodos - TodoNodeService");
 
     const userId = useStore.getState().user.id;
     const accessToken = useStore.getState().user.accessToken;
@@ -20,61 +39,57 @@ export class TodoKyJsonServerService implements TodoService {
       throw new Error("User ID not found or access token not found");
     }
 
-    const url = new URL("http://localhost:4000/600/todos");
-    url.searchParams.append("userId", userId.toString()); // ?userId=1 because JSON Server uses query params
+    const url = new URL(`${BACKEND_URL}/${userId}`);
 
     const todos: Todos = await ky
       .get(url, { headers: { Authorization: `Bearer ${accessToken}` } })
       .json();
 
-    return todos;
+    return todos.map((todo) => mapTodoFromServerFormatToClientFormat(todo));
   }
 
   async addTodo(todo: Todo): Promise<Response> {
-    console.log("Service: addTodo - TodoKyJsonServerService");
+    console.log("Service: addTodo - TodoNodeService");
 
     const accessToken = useStore.getState().user.accessToken;
 
-    const url = new URL("http://localhost:4000/600/todos");
-    url.searchParams.append("userId", todo.userId.toString()); // ?userId=2 because JSON Server uses query params
+    const url = new URL(`${BACKEND_URL}`);
 
     const response = await ky.post(url, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-      json: todo,
+      json: mapTodoFromClientFormatToServerFormat(todo),
     });
 
     return response.json();
   }
 
   async toggleTodo(todo: Todo): Promise<Response> {
-    console.log("Service: updateTodo - TodoKyJsonServerService");
+    console.log("Service: updateTodo - TodoNodeService");
 
     const accessToken = useStore.getState().user.accessToken;
 
-    const url = new URL(`http://localhost:4000/600/todos/${todo.id}`);
-    url.searchParams.append("userId", todo.userId.toString()); // ?userId=2 because JSON Server uses query params
+    const url = new URL(`${BACKEND_URL}/${todo.id}`);
 
     const response = await ky.patch(url, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-      json: todo,
+      json: mapTodoFromClientFormatToServerFormat(todo),
     });
 
     return response;
   }
 
   async deleteTodo(todoId: TodoId): Promise<Response> {
-    console.log("Service: deleteTodo - TodoKyJsonServerService");
+    console.log("Service: deleteTodo - TodoNodeService");
 
     const accessToken = useStore.getState().user.accessToken;
 
-    const url = new URL(`http://localhost:4000/600/todos/${todoId}`);
-    url.searchParams.append("userId", todoId.toString()); // ?userId=2 because JSON Server uses query params
+    const url = new URL(`${BACKEND_URL}/${todoId}`);
 
     const response = await ky.delete(url, {
       headers: {

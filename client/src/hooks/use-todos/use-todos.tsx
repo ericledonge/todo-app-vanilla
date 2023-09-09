@@ -10,6 +10,7 @@ import { TodoRepository } from "../../repositories";
 import {
   TodoFetchJsonServerService,
   TodoKyJsonServerService,
+  TodoNodeService,
 } from "../../services";
 
 // store
@@ -18,12 +19,15 @@ import { useGetSystemUsed } from "../../store";
 export const useTodos = () => {
   const systemUsed = useGetSystemUsed();
 
-  const todoRepositoryKy: TodoRepository = useMemo(() => {
+  const todoRepository: TodoRepository = useMemo(() => {
     if (systemUsed === "KY_JSON_SERVER") {
       return new TodoRepository(new TodoKyJsonServerService());
     }
     if (systemUsed === "FETCH_JSON_SERVER") {
       return new TodoRepository(new TodoFetchJsonServerService());
+    }
+    if (systemUsed === "NODE") {
+      return new TodoRepository(new TodoNodeService());
     }
     throw new Error("Invalid systemUsed value");
   }, [systemUsed]);
@@ -34,34 +38,36 @@ export const useTodos = () => {
 
   const fetchTodos = useCallback(async () => {
     setIsLoading(true);
-    todoRepositoryKy
-      .fetchTodos()
-      .then((todos) => {
-        setTodos(todos);
-      })
-      .catch((error) => setError(error.message))
-      .finally(() => setIsLoading(false));
-  }, [todoRepositoryKy]);
+    try {
+      const todos = await todoRepository.fetchTodos();
+      setTodos(todos);
+      console.log(todos);
+    } catch (error) {
+      console.error(error);
+      setError(new Error("Failed to fetch todos."));
+    }
+    setIsLoading(false);
+  }, [todoRepository]);
 
-  useEffect(() => {
-    fetchTodos().then();
-  }, [fetchTodos]);
-
-  // use case
   const addTodo = useCallback(
     async (todo: Todo) => {
+      setIsLoading(true);
       try {
-        await todoRepositoryKy.addTodo(todo);
+        const response = await todoRepository.addTodo(todo);
+        console.log(response);
         await fetchTodos();
       } catch (error) {
-        setError(new Error("Failed to add a new todo."));
+        console.error(error);
+        setError(new Error(`Failed to add new todo id: ${todo.id}`));
       }
+      setIsLoading(false);
     },
-    [fetchTodos, todoRepositoryKy],
+    [fetchTodos, todoRepository],
   );
 
   const toggleTodo = useCallback(
     async (todoId: TodoId) => {
+      setIsLoading(true);
       const updatedTodo = todos.find((todo) => todo.id === todoId);
 
       if (!updatedTodo) {
@@ -71,26 +77,33 @@ export const useTodos = () => {
       updatedTodo.isDone = !updatedTodo.isDone;
 
       try {
-        await todoRepositoryKy.toggleTodo(updatedTodo);
+        await todoRepository.toggleTodo(updatedTodo);
         await fetchTodos();
       } catch (error) {
         setError(new Error(`Failed to toggle todo id: ${todoId}`));
       }
+      setIsLoading(false);
     },
-    [todos, todoRepositoryKy, fetchTodos],
+    [todos, todoRepository, fetchTodos],
   );
 
   const removeTodo = useCallback(
     async (todoId: TodoId) => {
+      setIsLoading(true);
       try {
-        await todoRepositoryKy.deleteTodo(todoId);
+        await todoRepository.deleteTodo(todoId);
         await fetchTodos();
       } catch (error) {
         setError(new Error(`Failed to remove todo id: ${todoId}`));
       }
+      setIsLoading(false);
     },
-    [fetchTodos, todoRepositoryKy],
+    [fetchTodos, todoRepository],
   );
+
+  useEffect(() => {
+    fetchTodos();
+  }, [fetchTodos]);
 
   return {
     todos,

@@ -22,6 +22,9 @@ export const useLogin = () => {
     if (systemUsed === "FETCH_JSON_SERVER") {
       return new AuthRepository(new AuthFetchJsonServerService());
     }
+    if (systemUsed === "NODE") {
+      return new AuthRepository(new AuthFetchJsonServerService());
+    }
     throw new Error("Invalid systemUsed value");
   }, [systemUsed]);
 

@@ -17,7 +17,7 @@ export const createUserSlice: StoreSlice<UserSlice> = (set) => ({
   user: {
     id: null,
     accessToken: null,
-    systemUsed: "KY_JSON_SERVER",
+    systemUsed: "NODE",
   },
 
   setUserId: (userId: number) =>
